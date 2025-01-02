@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const pool = require('./db');
+const { watchSheet } = require('./watchSheet');
 require('dotenv').config();
 
 
@@ -36,7 +37,7 @@ app.get('/api/test', async (req, res) => {
   }
 });
 
-
+watchSheet();
 
 // Start server
 const PORT = process.env.PORT || 8000;
