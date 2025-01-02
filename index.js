@@ -15,6 +15,15 @@ app.get('/', (req, res) => {
   res.send('Welcome to Flyer Footprints API!');
 });
 
+app.post('/webhook', (req, res) => {
+  console.log('Received a webhook request:', req.body);
+  res.status(200).send('OK'); // Respond to the Google Sheets
+
+  fetchDataFromSheet()
+    .then(() => console.log('Data successfully fetched from Google Sheets'))
+    .catch(err => console.error('Error fetching data from Google Sheets:', err));
+});
+
 app.get('/api/test', async (req, res) => {
   try {
     console.log('Received a request to /api/test');
