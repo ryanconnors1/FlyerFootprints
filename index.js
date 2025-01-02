@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const pool = require('./db');
 const { watchSheet } = require('./watchSheet');
+const { fetchDataFromSheet } = require('./syncInternshipData');
 require('dotenv').config();
 
 
@@ -37,7 +38,19 @@ app.get('/api/test', async (req, res) => {
   }
 });
 
-watchSheet();
+(async () => {
+  try {
+      console.log('Fetching initial data...');
+      await fetchDataFromSheet();
+      console.log('Initial data fetch complete.');
+
+      console.log('Setting up watch channel...');
+      await watchSheet();
+      console.log('Watch channel setup complete.');
+  } catch (error) {
+      console.error('Error during startup:', error);
+  }
+})();
 
 // Start server
 const PORT = process.env.PORT || 8000;

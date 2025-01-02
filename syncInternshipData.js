@@ -23,14 +23,29 @@ const fetchDataFromSheet = async () => {
         });
         const rows = response.data.values;
         if (rows.length) {
-            console.log('Fetched rows:', rows);
+            //console.log('Fetched rows:', rows);
             // Insert rows into database, starting from index 1 to skip the header
             for (let i = 1; i < rows.length; i++) {
                 const [company, location, industry, term, year, major] = rows[i];
-                await pool.query(
-                    'INSERT INTO internships (company, location, industry, term, year, major) VALUES ($1, $2, $3, $4, $5, $6)',
-                    [company, location, industry, term, parseInt(year), major]
-                );
+                // Trim and validate year
+                const trimmedYear = year ? year.trim() : null;
+                const parsedYear = parseInt(trimmedYear, 10);
+        
+                if (isNaN(parsedYear)) {
+                    console.warn(`Skipping row ${i}: Invalid year value "${year}"`);
+                    continue; // Skip rows with invalid year values
+                }
+
+                try {
+                    await pool.query(
+                        `INSERT INTO internships (company, location, industry, term, year, major) 
+                         VALUES ($1, $2, $3, $4, $5, $6)
+                         ON CONFLICT (company, location, industry, term, year, major) DO NOTHING`,
+                        [company, location, industry, term, parsedYear, major]
+                    );                    
+                } catch (dbError) {
+                    console.error(`Error inserting row ${i}:`, dbError);
+                }
             }
             console.log('Sheet data succcessfully synced with the database');
         } else {
@@ -41,4 +56,4 @@ const fetchDataFromSheet = async () => {
     }
 }
 
-fetchDataFromSheet();
+module.exports = { fetchDataFromSheet };
