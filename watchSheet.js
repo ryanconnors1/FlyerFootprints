@@ -96,34 +96,46 @@ const watchSheet = async () => {
     }
 };
 
-// Initialize the watch channel
+// Validate the given channel by checking the expiration, resourceId, webhook URL
+const validateChannel = async (channel) => {
+    const drive = google.drive({ version: 'v3', auth: await auth.getClient() });
+
+    try {
+        // Fetch the current file metadata to get its resourceId
+        const fileMetadata = await drive.files.get({ fileId: SHEET_ID });
+        const currentResourceId = fileMetadata.data.id;
+
+        if (
+            channel.expiration > Date.now() &&
+            channel.resourceId === currentResourceId &&
+            channel.address === WEBHOOK_URL
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error('Error validating channel:', error);
+        return false;
+    }
+};
+
+// Initialize the watch channel on startup
 const initializeWatch = async () => {
     try {
-        let validChannel = null;
-
-        // Check if the channel file exists and read its data
         if (fs.existsSync(channelFile)) {
-            const channelData = JSON.parse(fs.readFileSync(channelFile));
-            const now = Date.now();
-
-            // Check all channels in the file for validity
-            for (const channel of channelData) {
-                if (channel.expiration > now) {
-                    console.log('Found existing watch channel:', channel.expiration);
-                    validChannel = channel; // Found a valid channel
-                    break;
+            const channels = JSON.parse(fs.readFileSync(channelFile));
+            for (const channel of channels) {
+                const isValid = await validateChannel(channel);
+                if (isValid) {
+                    console.log('Valid existing watch channel:', channel);
+                    scheduleChannelRenewal(channel.expiration);
+                    return;
                 }
             }
-
-            if (validChannel) {
-                console.log('Existing watch channel is still valid:', validChannel);
-                scheduleChannelRenewal(validChannel.expiration);
-                return;
-            } else {
-                console.log('Existing watch channels have expired. Creating a new one.');
-            }
+            console.log('No valid channel found. Creating a new one...');
         } else {
-            console.log('No existing watch channel found. Creating a new one.');
+            console.log('No existing watch channels found.');
         }
 
         const newExpiration = await watchSheet();
@@ -132,6 +144,5 @@ const initializeWatch = async () => {
         console.error('Error initializing watch:', error);
     }
 };
-
 
 module.exports = { initializeWatch };
