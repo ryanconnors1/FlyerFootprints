@@ -13,6 +13,7 @@ const auth = new google.auth.GoogleAuth({
     scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly']
 });
 
+// Fetch data from the Google Sheet and sync it with the database
 const fetchDataFromSheet = async () => {
     const sheets = google.sheets({ version: 'v4', auth: await auth.getClient() });
 
@@ -22,31 +23,68 @@ const fetchDataFromSheet = async () => {
             range: RANGE
         });
         const rows = response.data.values;
-        if (rows.length) {
+        // Make sure there is more than just the header row
+        if (rows && rows.length > 1) {
             //console.log('Fetched rows:', rows);
-            // Insert rows into database, starting from index 1 to skip the header
-            for (let i = 1; i < rows.length; i++) {
-                const [company, location, industry, term, year, major] = rows[i];
+
+            // Map the Google Sheet data to a format for comparison
+            const sheetRows = rows.slice(1).map(row => ({
+                company: row[0],
+                location: row[1],
+                industry: row[2],
+                term: row[3],
+                year: row[4],
+                major: row[5],
+            }));
+
+            // Insert rows into database that are not already present
+            for (let i = 0; i < sheetRows.length; i++) {
+                const { company, location, industry, term, year, major } = sheetRows[i];
                 // Trim and validate year
                 const trimmedYear = year ? year.trim() : null;
                 const parsedYear = parseInt(trimmedYear, 10);
         
                 if (isNaN(parsedYear)) {
-                    console.warn(`Skipping row ${i}: Invalid year value "${year}"`);
+                    console.warn(`Skipping row ${i + 1}: Invalid year value "${year}"`);
                     continue; // Skip rows with invalid year values
                 }
 
                 try {
-                    await pool.query(
+                    const result = await pool.query(
                         `INSERT INTO internships (company, location, industry, term, year, major) 
                          VALUES ($1, $2, $3, $4, $5, $6)
                          ON CONFLICT (company, location, industry, term, year, major) DO NOTHING`,
                         [company, location, industry, term, parsedYear, major]
-                    );                    
+                    );
+                    if (result.rowCount > 0) {
+                        console.log(`Inserted row: [${company}, ${location}, ${industry}, ${term}, ${parsedYear}, ${major}]`);
+                    }            
                 } catch (dbError) {
-                    console.error(`Error inserting row ${i}:`, dbError);
+                    console.error(`Error inserting row ${i + 1}:`, dbError);
                 }
             }
+
+            // Logic to delete rows no longer present in the Google Sheet
+            const dbRows = await pool.query('SELECT * FROM internships');
+            // Find rows in the database that are not in the sheet
+            const rowsToDelete = dbRows.rows.filter(dbRow =>
+                !sheetRows.some(sheetRow =>
+                    sheetRow.company === dbRow.company &&
+                    sheetRow.location === dbRow.location &&
+                    sheetRow.industry === dbRow.industry &&
+                    sheetRow.term === dbRow.term &&
+                    parseInt(sheetRow.year, 10) === dbRow.year &&
+                    sheetRow.major === dbRow.major
+                )
+            );
+            // Delete rows no longer present in the sheet
+            for (const row of rowsToDelete) {
+                const result = await pool.query('DELETE FROM internships WHERE id = $1', [row.id]);
+                if (result.rowCount > 0) {
+                    console.log(`Deleted row: ${row.company}, ${row.location}, ${row.industry}, ${row.term}, ${row.year}, ${row.major}`);
+                }
+            }
+
             console.log('Sheet data succcessfully synced with the database');
         } else {
             console.log('No data found in the sheet');
