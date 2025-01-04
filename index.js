@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const pool = require('./db');
+const path = require('path');
 const { initializeWatch } = require('./watchSheet');
 const { fetchDataFromSheet } = require('./syncInternshipData');
 require('dotenv').config();
@@ -12,30 +13,74 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.get('/', (req, res) => {
-  res.send('Welcome to Flyer Footprints API!');
+// Serve static files from the React app
+const buildPath = path.join(__dirname, 'build');
+app.use(express.static(buildPath));
+
+// Webhook route for Google Sheets
+let isFetching = false;
+app.post('/webhook', async (req, res) => {
+    if (isFetching) return res.status(200).send('Already processing');
+    isFetching = true;
+    try {
+        await fetchDataFromSheet();
+        console.log('Data successfully fetched from Google Sheets');
+    } catch (err) {
+        console.error('Error fetching data from Google Sheets:', err);
+    } finally {
+        isFetching = false;
+        res.status(200).send('OK');
+    }
 });
 
-app.post('/webhook', async(req, res) => {
-  console.log('Received a webhook request:', req.body);
-  res.status(200).send('OK'); // Respond to the Google Sheets
+// Backend API route for searching and filtering internships
+app.get('/internships', async (req, res) => {
+  const { company, location, industry, term, major } = req.query;
 
-  await fetchDataFromSheet()
-    .then(() => console.log('Data successfully fetched from Google Sheets'))
-    .catch(err => console.error('Error fetching data from Google Sheets:', err));
-});
+  // Where clause conditions and values
+  const conditions = [];
+  const values = [];
 
-app.get('/api/test', async (req, res) => {
-  try {
-    console.log('Received a request to /api/test');
-    const result = await pool.query('SELECT NOW()');
-    console.log('Query successful:', result.rows);
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error in /api/test:', err); // Log the full error object
-    res.status(500).send(`Server error: ${err.message || 'Unknown error'}`); // Send detailed error to client
+  if (company) {
+      const sanitizedCompany = company.replace(/,/g, '');
+      conditions.push(`REPLACE(company, ',', '') ILIKE $${conditions.length + 1}`);
+      values.push(`%${sanitizedCompany}%`);
   }
+  if (location) {
+      const sanitizedLocation = location.replace(/,/g, '');
+      conditions.push(`REPLACE(location, ',', '') ILIKE $${conditions.length + 1}`);
+      values.push(`%${sanitizedLocation}%`);
+  }
+  if (industry) {
+      conditions.push(`industry ILIKE $${conditions.length + 1}`);
+      values.push(`%${industry}%`);
+  }
+  if (term) {
+      conditions.push(`term ILIKE $${conditions.length + 1}`);
+      values.push(`%${term}%`);
+  }
+  if (major) {
+      conditions.push(`major ILIKE $${conditions.length + 1}`);
+      values.push(`%${major}%`);
+  }
+
+  const query = `
+      SELECT * FROM internships
+      ${conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : ''}
+  `;
+
+  try {
+      const result = await pool.query(query, values);
+      res.json(result.rows);
+  } catch (error) {
+      console.error('Error querying database:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Catch-all route to serve the frontend
+app.get('*', (req, res) => {
+  res.sendFile(path.join(buildPath, 'index.html'));
 });
 
 (async () => {
