@@ -57,7 +57,7 @@ const fetchDataFromSheet = async () => {
                         [company, location, industry, term, parsedYear, major]
                     );
                     if (result.rowCount > 0) {
-                        console.log(`Inserted row: [${company}, ${location}, ${industry}, ${term}, ${parsedYear}, ${major}]`);
+                        console.log(`Inserted row: ${company}, ${location}, ${industry}, ${term}, ${parsedYear}, ${major}`);
                     }            
                 } catch (dbError) {
                     console.error(`Error inserting row ${i + 1}:`, dbError);
