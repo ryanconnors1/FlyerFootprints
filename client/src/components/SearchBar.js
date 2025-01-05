@@ -30,7 +30,7 @@ const SearchBar = ({ onSearch }) => {
     fetchAttributes('major', setMajors);
     fetchAttributes('company', setCompanies);
     fetchAttributes('location', setLocations);
-    fetchAttributes('terms', setTerms);
+    fetchAttributes('term', setTerms);
   }, []);
 
   const handleSearch = () => {
