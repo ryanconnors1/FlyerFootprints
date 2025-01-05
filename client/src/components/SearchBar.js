@@ -34,14 +34,22 @@ const SearchBar = ({ onSearch }) => {
   }, []);
 
   const handleSearch = () => {
-    onSearch({
+    const params = {
       company,
       location,
       industry: industry?.value || '',
       major: major?.value || '',
       term,
-    });
+    };
+  
+    // Remove empty fields
+    const filteredParams = Object.fromEntries(
+      Object.entries(params).filter(([_, value]) => value)
+    );
+  
+    onSearch(filteredParams);
   };
+  
 
   return (
     <div className="search-bar">

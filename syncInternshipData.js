@@ -72,7 +72,7 @@ const fetchDataFromSheet = async () => {
             const rowsToDelete = dbRows.rows.filter(dbRow =>
                 !sheetRows.some(sheetRow =>
                     sheetRow.company === dbRow.company &&
-                    !sheetRow.moreInfo && !dbRow.moreinfo || sheetRow.moreInfo === dbRow.moreinfo &&
+                    sheetRow.moreInfo === dbRow.moreinfo &&
                     sheetRow.location === dbRow.location &&
                     sheetRow.industry === dbRow.industry &&
                     sheetRow.term === dbRow.term &&
