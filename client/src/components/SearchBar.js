@@ -66,7 +66,7 @@ const SearchBar = ({ onSearch }) => {
         <Select
           options={locations}
           value={location}
-          onChange={(selected) => setCompany(selected)}
+          onChange={(selected) => setLocation(selected)}
           placeholder="Search by location"
           isClearable
           isSearchable
@@ -77,7 +77,7 @@ const SearchBar = ({ onSearch }) => {
         <Select
           options={industries}
           value={industry}
-          onChange={(selected) => setCompany(selected)}
+          onChange={(selected) => setIndustry(selected)}
           placeholder="Select an industry"
           isClearable
           isSearchable
@@ -88,7 +88,7 @@ const SearchBar = ({ onSearch }) => {
         <Select
           options={majors}
           value={major}
-          onChange={(selected) => setCompany(selected)}
+          onChange={(selected) => setMajor(selected)}
           placeholder="Select a major"
           isClearable
           isSearchable
@@ -99,7 +99,7 @@ const SearchBar = ({ onSearch }) => {
         <Select
           options={terms}
           value={terms.find((option) => option.value === term)}
-          onChange={(selected) => setCompany(selected)}
+          onChange={(selected) => setTerm(selected)}
           placeholder="Select a term"
           isClearable
           isSearchable

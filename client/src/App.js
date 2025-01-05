@@ -12,11 +12,16 @@ const App = () => {
       const query = new URLSearchParams(searchParams).toString();
       const response = await fetch(`/internships?${query}`);
       const data = await response.json();
+      console.log('Fetched interns:', data);
       setInternships(data);
     } catch (error) {
         console.error('Error fetching internships:', error);
     }
   };
+
+  useEffect(() => {
+    handleSearch();
+  }, []);  
 
   return (
     <div className="App">
