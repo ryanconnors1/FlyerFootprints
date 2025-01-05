@@ -35,11 +35,11 @@ const SearchBar = ({ onSearch }) => {
 
   const handleSearch = () => {
     const params = {
-      company,
-      location,
+      company: company?.value || '',
+      location: location?.value || '',
       industry: industry?.value || '',
       major: major?.value || '',
-      term,
+      term:term?.value || ''
     };
   
     // Remove empty fields
