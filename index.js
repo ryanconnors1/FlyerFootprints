@@ -78,6 +78,27 @@ app.get('/internships', async (req, res) => {
   }
 });
 
+// Backend API route for fetching distinct values of a column
+app.get('/attributes/:column', async (req, res) => {
+    const { column } = req.params;
+    const allowedColumns = ['industry', 'major', 'term', 'company', 'location'];
+  
+    if (!allowedColumns.includes(column)) {
+      return res.status(400).json({ error: 'Invalid column' });
+    }
+  
+    try {
+      const query = `SELECT DISTINCT ${column} FROM internships ORDER BY ${column}`;
+      const result = await pool.query(query);
+      const uniqueValues = result.rows.map((row) => row[column]);
+      res.json(uniqueValues);
+    } catch (error) {
+      console.error(`Error fetching distinct ${column}:`, error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
+
 // Catch-all route to serve the frontend
 app.get('*', (req, res) => {
   res.sendFile(path.join(buildPath, 'index.html'));

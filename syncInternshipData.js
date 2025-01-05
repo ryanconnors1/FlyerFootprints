@@ -6,7 +6,7 @@ const pool = require('./db')
 
 const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
 const SHEET_ID = '1yLOt-6REcHH5Sbjl4E_YyDutU665Vrg0xLwmrrcsXWg'
-const RANGE = 'Database!A:F' // Read all rows, columns A-F
+const RANGE = 'Database!A:G' // Read all rows, columns A-F
 
 const auth = new google.auth.GoogleAuth({
     credentials: serviceAccount,
@@ -30,16 +30,17 @@ const fetchDataFromSheet = async () => {
             // Map the Google Sheet data to a format for comparison
             const sheetRows = rows.slice(1).map(row => ({
                 company: row[0],
-                location: row[1],
-                industry: row[2],
-                term: row[3],
-                year: row[4],
-                major: row[5],
+                moreInfo: row[1],
+                location: row[2],
+                industry: row[3],
+                term: row[4],
+                year: row[5],
+                major: row[6]
             }));
 
             // Insert rows into database that are not already present
             for (let i = 0; i < sheetRows.length; i++) {
-                const { company, location, industry, term, year, major } = sheetRows[i];
+                const { company, moreInfo, location, industry, term, year, major } = sheetRows[i];
                 // Trim and validate year
                 const trimmedYear = year ? year.trim() : null;
                 const parsedYear = parseInt(trimmedYear, 10);
@@ -51,13 +52,13 @@ const fetchDataFromSheet = async () => {
 
                 try {
                     const result = await pool.query(
-                        `INSERT INTO internships (company, location, industry, term, year, major) 
-                         VALUES ($1, $2, $3, $4, $5, $6)
-                         ON CONFLICT (company, location, industry, term, year, major) DO NOTHING`,
+                        `INSERT INTO internships (company, moreInfo, location, industry, term, year, major) 
+                         VALUES ($1, $2, $3, $4, $5, $6, $7)
+                         ON CONFLICT (company, moreInfo, location, industry, term, year, major) DO NOTHING`,
                         [company, location, industry, term, parsedYear, major]
                     );
                     if (result.rowCount > 0) {
-                        console.log(`Inserted row: ${company}, ${location}, ${industry}, ${term}, ${parsedYear}, ${major}`);
+                        console.log(`Inserted row: ${company}, ${moreInfo}, ${location}, ${industry}, ${term}, ${parsedYear}, ${major}`);
                     }            
                 } catch (dbError) {
                     console.error(`Error inserting row ${i + 1}:`, dbError);
@@ -70,6 +71,7 @@ const fetchDataFromSheet = async () => {
             const rowsToDelete = dbRows.rows.filter(dbRow =>
                 !sheetRows.some(sheetRow =>
                     sheetRow.company === dbRow.company &&
+                    sheetRow.moreInfo === dbRow.moreInfo &&
                     sheetRow.location === dbRow.location &&
                     sheetRow.industry === dbRow.industry &&
                     sheetRow.term === dbRow.term &&
@@ -81,7 +83,7 @@ const fetchDataFromSheet = async () => {
             for (const row of rowsToDelete) {
                 const result = await pool.query('DELETE FROM internships WHERE id = $1', [row.id]);
                 if (result.rowCount > 0) {
-                    console.log(`Deleted row: ${row.company}, ${row.location}, ${row.industry}, ${row.term}, ${row.year}, ${row.major}`);
+                    console.log(`Deleted row: ${row.company}, ${row.moreInfo}, ${row.location}, ${row.industry}, ${row.term}, ${row.year}, ${row.major}`);
                 }
             }
 

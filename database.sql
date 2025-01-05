@@ -2,6 +2,7 @@ CREATE DATABASE internship_db;
 
 CREATE TABLE internships (
     id SERIAL PRIMARY KEY,
+    moreInfo VARCHAR(255),
     company VARCHAR(255),
     location VARCHAR(255),
     industry VARCHAR(255),

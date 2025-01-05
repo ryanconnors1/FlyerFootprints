@@ -1,47 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 
 const SearchBar = ({ onSearch }) => {
-  const [company, setCompany] = useState('');
-  const [location, setLocation] = useState('');
+  const [company, setCompany] = useState(null);
+  const [location, setLocation] = useState(null);
   const [industry, setIndustry] = useState(null);
   const [major, setMajor] = useState(null);
-  const [term, setTerm] = useState('');
+  const [term, setTerm] = useState(null);
 
-  const industries = [
-    { value: 'Construction', label: 'Construction' },
-    { value: 'Education', label: 'Education' },
-    { value: 'Energy & Utilities', label: 'Energy & Utilities' },
-    { value: 'Entertainment & Media', label: 'Entertainment & Media' },
-    { value: 'Financial Services & Accounting', label: 'Financial Services & Accounting' },
-    { value: 'Government & Public Services', label: 'Government & Public Services' },
-    { value: 'Health & Human Services', label: 'Health & Human Services' },
-    { value: 'Hospitality', label: 'Hospitality' },
-    { value: 'International Business', label: 'International Business' },
-    { value: 'Manufacturing', label: 'Manufacturing' },
-    { value: 'Marketing', label: 'Marketing' },
-    { value: 'Real Estate', label: 'Real Estate' },
-    { value: 'Retail', label: 'Retail' },
-    { value: 'Sports & Recreation', label: 'Sports & Recreation' },
-    { value: 'Technology', label: 'Technology' },
-    { value: 'Telecommunications', label: 'Telecommunications' },
-    { value: 'Transportation', label: 'Transportation' },
-  ];
+  const [industries, setIndustries] = useState([]);
+  const [majors, setMajors] = useState([]);
+  const [companies, setCompanies] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [terms, setTerms] = useState([]);
 
-  const majors = [
-    { value: 'Accounting', label: 'Accounting' },
-    { value: 'Business Leadership', label: 'Business Leadership' },
-    { value: 'Business, AI & Innovation', label: 'Business, AI & Innovation' },
-    { value: 'Digital Marketing Strategy', label: 'Digital Marketing Strategy' },
-    { value: 'Finance', label: 'Finance' },
-    { value: 'Marketing', label: 'Marketing' },
-    { value: 'Music Business', label: 'Music Business' },
-    { value: 'SPARK', label: 'SPARK' },
-    { value: 'Sports & Entertainment Management', label: 'Sports & Entertainment Management' },
-    { value: 'Technology, AI & Society', label: 'Technology, AI & Society' }
-  ];
+  useEffect(() => {
+    const fetchAttributes = async (column, setter) => {
+      try {
+        const response = await fetch(`/attributes/${column}`);
+        const data = await response.json();
+        const options = data.map((value) => ({ value, label: value }));
+        setter(options);
+      } catch (error) {
+        console.error(`Error fetching ${column} options:`, error);
+      }
+    };
 
-  const terms = ['Fall Semester', 'Spring Semester', 'Summer'];
+    fetchAttributes('industry', setIndustries);
+    fetchAttributes('major', setMajors);
+    fetchAttributes('company', setCompanies);
+    fetchAttributes('location', setLocations);
+    fetchAttributes('terms', setTerms);
+  }, []);
 
   const handleSearch = () => {
     onSearch({
@@ -55,57 +45,71 @@ const SearchBar = ({ onSearch }) => {
 
   return (
     <div className="search-bar">
-      <div>
+      <img
+        src="./naz-logo.png"
+        alt="Naz Logo"
+        className="absolute top-40 right-20 mr-24 w-50 h-50"
+      />
+      <div className="mb-2 w-1/3">
         <label>Company</label>
-        <input
-          type="text"
-          placeholder="Search by company"
+        <Select
+          options={companies}
           value={company}
-          onChange={(e) => setCompany(e.target.value)}
+          onChange={(selected) => setCompany(selected?.value || '')}
+          placeholder="Search by company"
+          isClearable
+          isSearchable
         />
       </div>
-      <div>
+      <div className="mb-2 w-1/3">
         <label>Location</label>
-        <input
-          type="text"
-          placeholder="Search by location (city and/or state)"
+        <Select
+          options={locations}
           value={location}
-          onChange={(e) => setLocation(e.target.value)}
+          onChange={(selected) => setLocation(selected?.value || '')}
+          placeholder="Search by location"
+          isClearable
+          isSearchable
         />
       </div>
-      <div>
+      <div className="mb-2 w-1/3">
         <label>Industry</label>
         <Select
           options={industries}
           value={industry}
-          onChange={setIndustry}
+          onChange={(selected) => setIndustry(selected?.value || '')}
           placeholder="Select an industry"
           isClearable
+          isSearchable
         />
       </div>
-      <div>
+      <div className="mb-2 w-1/3">
         <label>Major</label>
         <Select
           options={majors}
           value={major}
-          onChange={setMajor}
+          onChange={(selected) => setMajor(selected?.value || '')}
           placeholder="Select a major"
           isClearable
           isSearchable
         />
       </div>
-      <div>
-        <label>Term</label>
-        <select value={term} onChange={(e) => setTerm(e.target.value)}>
-          <option value="">Select a term</option>
-          {terms.map((termOption) => (
-            <option key={termOption} value={termOption}>
-              {termOption}
-            </option>
-          ))}
-        </select>
+      <div className="mb-2 w-1/3">
+        <label className="block text-gray-700">Term</label>
+        <Select
+          options={terms}
+          value={terms.find((option) => option.value === term)}
+          onChange={(selected) => setTerm(selected?.value || '')}
+          placeholder="Select a term"
+          isClearable
+          isSearchable
+        />
       </div>
-      <button onClick={handleSearch} className='bg-purple-custom hover:bg-purple-500 text-white font-bold py-2 px-4 rounded'>Search
+      <button
+        onClick={handleSearch}
+        className="bg-purple-custom hover:bg-purple-500 text-white font-bold py-2 px-4 rounded mt-4"
+      >
+        Search
       </button>
     </div>
   );

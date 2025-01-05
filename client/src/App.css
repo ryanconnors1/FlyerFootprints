@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Ensure consistency of text color for <select> and <option> */
+select {
+    color: #4b5563 !important; /* Tailwind's text-gray-700 color */
+  }
+  
+  select option {
+    color: #374151 !important; /* Tailwind's text-gray-700 color for option items */
+  }
+  
+  select option:disabled {
+    color: #6b7280 !important; /* Tailwind's text-gray-500 color for the placeholder */
+  }
+  
