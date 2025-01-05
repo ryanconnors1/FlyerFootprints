@@ -55,7 +55,7 @@ const fetchDataFromSheet = async () => {
                         `INSERT INTO internships (company, moreInfo, location, industry, term, year, major) 
                          VALUES ($1, $2, $3, $4, $5, $6, $7)
                          ON CONFLICT (company, moreInfo, location, industry, term, year, major) DO NOTHING`,
-                        [company, location, industry, term, parsedYear, major]
+                        [company, moreInfo, location, industry, term, parsedYear, major]
                     );
                     if (result.rowCount > 0) {
                         console.log(`Inserted row: ${company}, ${moreInfo}, ${location}, ${industry}, ${term}, ${parsedYear}, ${major}`);
