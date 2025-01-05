@@ -14,8 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files from the React app
-const buildPath = path.join(__dirname, 'build');
-app.use(express.static(buildPath));
+app.use(express.static(path.join(__dirname, './client/build')));
 
 // Webhook route for Google Sheets
 let isFetching = false;
@@ -101,8 +100,8 @@ app.get('/attributes/:column', async (req, res) => {
 
 // Catch-all route to serve the frontend
 app.get('*', (req, res) => {
-  res.sendFile(path.join(buildPath, 'index.html'));
-});
+    res.sendFile(path.join(__dirname, './client/build', 'index.html'));
+  });
 
 (async () => {
   try {

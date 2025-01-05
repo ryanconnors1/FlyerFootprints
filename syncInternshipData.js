@@ -67,7 +67,7 @@ const fetchDataFromSheet = async () => {
 
             // Logic to delete rows no longer present in the Google Sheet
             const dbRows = await pool.query('SELECT * FROM internships');
-            //console.log('Fetched rows from the database:', dbRows.rows);
+            // console.log('Fetched rows from the database:', dbRows.rows);
             // Find rows in the database that are not in the sheet
             const rowsToDelete = dbRows.rows.filter(dbRow =>
                 !sheetRows.some(sheetRow =>
