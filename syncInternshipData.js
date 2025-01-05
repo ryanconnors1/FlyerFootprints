@@ -6,7 +6,7 @@ const pool = require('./db')
 
 const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
 const SHEET_ID = '1yLOt-6REcHH5Sbjl4E_YyDutU665Vrg0xLwmrrcsXWg'
-const RANGE = 'Database!A:G' // Read all rows, columns A-F
+const RANGE = 'Database!A:G' // Read all rows, columns A-G
 
 const auth = new google.auth.GoogleAuth({
     credentials: serviceAccount,
@@ -67,11 +67,12 @@ const fetchDataFromSheet = async () => {
 
             // Logic to delete rows no longer present in the Google Sheet
             const dbRows = await pool.query('SELECT * FROM internships');
+            //console.log('Fetched rows from the database:', dbRows.rows);
             // Find rows in the database that are not in the sheet
             const rowsToDelete = dbRows.rows.filter(dbRow =>
                 !sheetRows.some(sheetRow =>
                     sheetRow.company === dbRow.company &&
-                    sheetRow.moreInfo === dbRow.moreInfo &&
+                    !sheetRow.moreInfo && !dbRow.moreinfo || sheetRow.moreInfo === dbRow.moreinfo &&
                     sheetRow.location === dbRow.location &&
                     sheetRow.industry === dbRow.industry &&
                     sheetRow.term === dbRow.term &&

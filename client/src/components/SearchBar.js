@@ -50,7 +50,7 @@ const SearchBar = ({ onSearch }) => {
         alt="Naz Logo"
         className="absolute top-40 right-20 mr-24 w-50 h-50"
       />
-      <div className="mb-2 w-1/3">
+      <div className="ml-2 mb-2 w-1/3">
         <label>Company</label>
         <Select
           options={companies}
@@ -61,7 +61,7 @@ const SearchBar = ({ onSearch }) => {
           isSearchable
         />
       </div>
-      <div className="mb-2 w-1/3">
+      <div className="ml-2 mb-2 w-1/3">
         <label>Location</label>
         <Select
           options={locations}
@@ -72,7 +72,7 @@ const SearchBar = ({ onSearch }) => {
           isSearchable
         />
       </div>
-      <div className="mb-2 w-1/3">
+      <div className="ml-2 mb-2 w-1/3">
         <label>Industry</label>
         <Select
           options={industries}
@@ -83,7 +83,7 @@ const SearchBar = ({ onSearch }) => {
           isSearchable
         />
       </div>
-      <div className="mb-2 w-1/3">
+      <div className="ml-2 mb-2 w-1/3">
         <label>Major</label>
         <Select
           options={majors}
@@ -94,7 +94,7 @@ const SearchBar = ({ onSearch }) => {
           isSearchable
         />
       </div>
-      <div className="mb-2 w-1/3">
+      <div className="ml-2 mb-2 w-1/3">
         <label className="block text-gray-700">Term</label>
         <Select
           options={terms}
@@ -107,7 +107,7 @@ const SearchBar = ({ onSearch }) => {
       </div>
       <button
         onClick={handleSearch}
-        className="bg-purple-custom hover:bg-purple-500 text-white font-bold py-2 px-4 rounded mt-4"
+        className="bg-purple-custom hover:bg-purple-500 text-white font-bold py-2 px-4 rounded mt-2 ml-2"
       >
         Search
       </button>
