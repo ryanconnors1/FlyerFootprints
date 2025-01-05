@@ -84,7 +84,7 @@ const fetchDataFromSheet = async () => {
             for (const row of rowsToDelete) {
                 const result = await pool.query('DELETE FROM internships WHERE id = $1', [row.id]);
                 if (result.rowCount > 0) {
-                    console.log(`Deleted row: ${row.company}, ${row.moreInfo}, ${row.location}, ${row.industry}, ${row.term}, ${row.year}, ${row.major}`);
+                    console.log(`Deleted row: ${row.company}, ${row.moreinfo}, ${row.location}, ${row.industry}, ${row.term}, ${row.year}, ${row.major}`);
                 }
             }
 

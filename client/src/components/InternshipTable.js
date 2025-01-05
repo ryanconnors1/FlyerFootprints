@@ -34,8 +34,8 @@ const InternshipTable = ({ internships }) => {
                 <td className="border border-gray-500 px-4 py-2">{internship.major}</td>
                 <td className="border border-gray-500 px-4 py-2">{internship.term}</td>
                 <td className="border border-gray-500 px-4 py-2">{internship.year}</td>
-                <td className={`border border-gray-500 px-4 py-2 ${internship.moreInfo === '—' ? 'text-center' : ''}`}
-                >{internship.moreInfo}</td>
+                <td className={`border border-gray-500 px-4 py-2 ${internship.moreinfo === '—' ? 'text-center' : ''}`}
+                >{internship.moreinfo}</td>
               </tr>
             ))}
           </tbody>
