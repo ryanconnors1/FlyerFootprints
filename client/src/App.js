@@ -8,11 +8,11 @@ const App = () => {
   const [internships, setInternships] = useState([]);
 
   const handleSearch = async (searchParams) => {
+    console.log('Fetched interns:');
     try {
       const query = new URLSearchParams(searchParams).toString();
       const response = await fetch(`/internships?${query}`);
       const data = await response.json();
-      console.log('Fetched interns:', data);
       setInternships(data);
     } catch (error) {
         console.error('Error fetching internships:', error);
