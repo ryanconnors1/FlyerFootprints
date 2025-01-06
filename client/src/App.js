@@ -26,7 +26,7 @@ const App = () => {
   return (
     <div className="App">
       <header className="bg-purple-800 text-gold-custom p-4 text-center">
-        <h1 className="text-5xl font-semibold">Flyer Footprints</h1>
+        <h1 className="text-5xl font-semibold font-serif">Flyer Footprints</h1>
       </header>
       <main className="p-4">
         <Modal />
