@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import SearchBar from './components/SearchBar';
 import InternshipTable from './components/InternshipTable';
+import Modal from './components/Modal';
 
 const App = () => {
   // State to hold search and filter results
   const [internships, setInternships] = useState([]);
 
   const handleSearch = async (searchParams) => {
-    console.log('Fetched interns:');
     try {
       const query = new URLSearchParams(searchParams).toString();
       const response = await fetch(`/internships?${query}`);
@@ -29,6 +29,7 @@ const App = () => {
         <h1 className="text-5xl font-semibold">Flyer Footprints</h1>
       </header>
       <main className="p-4">
+        <Modal />
         <SearchBar onSearch={handleSearch} />
         <InternshipTable internships={internships} />
       </main>

@@ -56,7 +56,7 @@ const SearchBar = ({ onSearch }) => {
       <img
         src="./naz-logo.png"
         alt="Naz Logo"
-        className="absolute top-40 right-20 mr-24 w-50 h-50"
+        className="hidden lg:block absolute top-40 right-20 mr-24 w-50 h-50"
       />
       <div className="ml-2 mb-2 w-1/3">
         <label>Company</label>
