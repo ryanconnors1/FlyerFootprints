@@ -12,59 +12,66 @@ const InternshipTable = ({ internships }) => {
   };
 
   const sortedInternships = [...internships].sort((a, b) => {
-    if (!sortConfig.key) return 0; // No sorting by default
+    if (!sortConfig.key){
+      const aVal = a['year']?.toString().toLowerCase() || '';
+      const bVal = b['year']?.toString().toLowerCase() || '';
+      if (aVal < bVal) return 1;
+      else if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    }
     const aVal = a[sortConfig.key]?.toString().toLowerCase() || '';
     const bVal = b[sortConfig.key]?.toString().toLowerCase() || '';
     if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
-    if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+    else if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
     return 0;
   });
 
   return (
     <div className="p-2 overflow-x-auto">
-      <h2 className="text-2xl font-bold mb-2 text-center">Past Internships</h2>
+      <h2 className="text-3xl font-semibold text-center">Past Internships</h2>
+      <h4 className="mb-2 text-center">(Click to sort by column)</h4>
       <div className="rounded-3xl overflow-hidden border border-gray-700">
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-purple-custom text-white">
               <th
-                className="border border-gray-500 px-4 py-2 cursor-pointer"
+                className="border border-gray-500 hover:bg-purple-500 px-4 py-2 cursor-pointer"
                 onClick={() => handleSort('company')}
               >
                 Company {sortConfig.key === 'company' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}
               </th>
               <th
-                className="border border-gray-500 px-4 py-2 cursor-pointer"
+                className="border border-gray-500 hover:bg-purple-500 px-4 py-2 cursor-pointer"
                 onClick={() => handleSort('location')}
               >
                 Location {sortConfig.key === 'location' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}
               </th>
               <th
-                className="border border-gray-500 px-4 py-2 cursor-pointer"
+                className="border border-gray-500 hover:bg-purple-500 px-4 py-2 cursor-pointer"
                 onClick={() => handleSort('industry')}
               >
                 Industry {sortConfig.key === 'industry' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}
               </th>
               <th
-                className="border border-gray-500 px-4 py-2 cursor-pointer"
+                className="border border-gray-500 hover:bg-purple-500 px-4 py-2 cursor-pointer"
                 onClick={() => handleSort('major')}
               >
                 Major {sortConfig.key === 'major' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}
               </th>
               <th
-                className="border border-gray-500 px-4 py-2 cursor-pointer"
+                className="border border-gray-500 hover:bg-purple-500 px-4 py-2 cursor-pointer"
                 onClick={() => handleSort('term')}
               >
                 Term {sortConfig.key === 'term' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}
               </th>
               <th
-                className="border border-gray-500 px-4 py-2 cursor-pointer"
+                className="border border-gray-500 hover:bg-purple-500 px-4 py-2 cursor-pointer"
                 onClick={() => handleSort('year')}
               >
                 Year {sortConfig.key === 'year' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}
               </th>
               <th
-                className="border border-gray-500 px-4 py-2 cursor-pointer"
+                className="border border-gray-500 hover:bg-purple-500 px-4 py-2 cursor-pointer"
                 onClick={() => handleSort('moreinfo')}
               >
                 More Info {sortConfig.key === 'moreinfo' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}
