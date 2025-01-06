@@ -12,7 +12,7 @@ const InternshipTable = ({ internships }) => {
   };
 
   const sortedInternships = [...internships].sort((a, b) => {
-    if (!sortConfig.key){
+    if (!sortConfig.key) {
       const aVal = a['year']?.toString().toLowerCase() || '';
       const bVal = b['year']?.toString().toLowerCase() || '';
       if (aVal < bVal) return 1;
@@ -79,7 +79,13 @@ const InternshipTable = ({ internships }) => {
             </tr>
           </thead>
           <tbody>
-            {sortedInternships.map((internship, index) => (
+            {sortedInternships.length === 0 ? (
+              <tr>
+                <td colSpan="7" className="bg-gold-custom text-center text-lg py-3 text-gray-700">
+                  No results. Please broaden your search.
+                </td>
+              </tr>
+            ) : sortedInternships.map((internship, index) => (
               <tr
                 key={internship.id}
                 className={
