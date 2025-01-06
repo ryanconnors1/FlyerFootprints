@@ -58,7 +58,7 @@ const SearchBar = ({ onSearch }) => {
         alt="Naz Logo"
         className="hidden lg:block absolute top-40 right-20 mr-24 w-50 h-50"
       />
-      <div className="ml-2 mb-2 w-1 sm:w-1 md:w-1 lg:w-1/3">
+      <div className="ml-2 mb-2 w-full sm:w-full md:w-full lg:w-1/3"> 
         <label>Company</label>
         <Select
           options={companies}
@@ -69,7 +69,7 @@ const SearchBar = ({ onSearch }) => {
           isSearchable
         />
       </div>
-      <div className="ml-2 mb-2 w-1 sm:w-1 md:w-1 lg:w-1/3">
+      <div className="ml-2 mb-2 w-full sm:w-full md:w-full lg:w-1/3"> 
         <label>Location</label>
         <Select
           options={locations}
@@ -80,7 +80,7 @@ const SearchBar = ({ onSearch }) => {
           isSearchable
         />
       </div>
-      <div className="ml-2 mb-2 w-1 sm:w-1 md:w-1 lg:w-1/3">        <label>Industry</label>
+      <div className="ml-2 mb-2 w-full sm:w-full md:w-full lg:w-1/3">       <label>Industry</label>
         <Select
           options={industries}
           value={industry}
@@ -90,7 +90,7 @@ const SearchBar = ({ onSearch }) => {
           isSearchable
         />
       </div>
-      <div className="ml-2 mb-2 w-1 sm:w-1 md:w-1 lg:w-1/3">        <label>Major</label>
+      <div className="ml-2 mb-2 w-full sm:w-full md:w-full lg:w-1/3">         <label>Major</label>
         <Select
           options={majors}
           value={major}
@@ -100,7 +100,7 @@ const SearchBar = ({ onSearch }) => {
           isSearchable
         />
       </div>
-      <div className="ml-2 mb-2 w-1 sm:w-1 md:w-1 lg:w-1/3">        <label className="block text-gray-700">Term</label>
+      <div className="ml-2 mb-2 w-full sm:w-full md:w-full lg:w-1/3">        <label className="block text-gray-700">Term</label>
         <Select
           options={terms}
           value={terms.find((option) => option.value === term)}
