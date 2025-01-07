@@ -16,6 +16,9 @@ const Modal = () => {
                         <p className="text-gray-700 mb-6">
                             This tool helps you explore the past internships of Nazareth University students. You can apply filters to search for internships by company, location, industry, major, and/or term. Click on the column headers to sort the table (once for ascending or twice for descending).
                         </p>
+                        <p className="text-gray-700 text-sm italic mb-6">
+                            Note: This is a pre-release version of the tool. Please report any feedback or issues to rpconnor@hamilton.edu.
+                        </p>
                         <button
                             onClick={closeModal}
                             className="bg-purple-custom hover:bg-purple-500 text-white font-bold py-2 px-4 rounded"
